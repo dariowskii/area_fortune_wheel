@@ -1,8 +1,5 @@
-import 'dart:async';
-import 'dart:math';
-
+import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/fortune_wheel_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,74 +32,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  StreamController<int> selected = StreamController<int>();
-
-  @override
-  void dispose() {
-    selected.close();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            SizedBox(
-              width: width * 0.8,
-              height: width * 0.8,
-              child: FortuneWheel(
-                selected: selected.stream,
-                alignment: Alignment.centerRight,
-                indicators: [
-                  FortuneIndicator(
-                    alignment: Alignment.centerRight,
-                    child: Transform.rotate(
-                      angle: pi / 2,
-                      child: TriangleIndicator(),
-                    ),
-                  ),
-                ],
-                items: [
-                  FortuneItem(child: Text('Item 1')),
-                  FortuneItem(child: Text('Item 2')),
-                  FortuneItem(child: Text('Item 3')),
-                  FortuneItem(child: Text('Item 4')),
-                  FortuneItem(child: Text('Item 5')),
-                  FortuneItem(child: Text('Item 6')),
-                  FortuneItem(child: Text('Item 7')),
-                  FortuneItem(child: Text('Item 8')),
-                  FortuneItem(child: Text('Item 9')),
-                  FortuneItem(child: Text('Item 10')),
-                ],
-              ),
-            ),
-            SizedBox(height: 64),
-            ElevatedButton(
-              onPressed: () {
-                final random = Random();
-                selected.add(random.nextInt(10));
-              },
-              child: Text('Spin'),
-            ),
-          ],
-        ),
-      ),
+      home: const FortuneWheelScreen(),
     );
   }
 }
