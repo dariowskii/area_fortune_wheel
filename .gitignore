@@ -46,3 +46,7 @@ app.*.map.json
 
 # FVM
 .fvm/
+
+# Generated files
+*.g.dart
+*.freezed.dart
