@@ -1,9 +1,8 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:arena_fortune_wheel/constants.dart';
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/data/fortune_wheel_provider.dart'
-    show fortuneWheelProvider;
+    show ViewState, fortuneWheelProvider;
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/domain/participant.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
@@ -18,18 +17,12 @@ class FortuneWheelScreen extends StatefulWidget {
 }
 
 class _FortuneWheelScreenState extends State<FortuneWheelScreen> {
-  late final _selectedStream = StreamController<int>();
-  late final _confettiController = ConfettiController(
-    duration: const Duration(seconds: 5),
-  );
   late final _textController = TextEditingController();
 
   var _drawerIsOpen = true;
 
   @override
   void dispose() {
-    _selectedStream.close();
-    _confettiController.dispose();
     _textController.dispose();
     super.dispose();
   }
@@ -104,14 +97,17 @@ class _FortuneWheelScreenState extends State<FortuneWheelScreen> {
                                       }
 
                                       return FortuneWheel(
-                                        selected: _selectedStream.stream,
+                                        selected: ref
+                                            .read(fortuneWheelProvider.notifier)
+                                            .streamController
+                                            .stream,
                                         alignment: Alignment.centerRight,
                                         animateFirst: false,
                                         onAnimationEnd: () {
-                                          _confettiController.play();
-                                        },
-                                        onAnimationStart: () {
-                                          _confettiController.stop();
+                                          ref
+                                              .read(
+                                                  fortuneWheelProvider.notifier)
+                                              .finish();
                                         },
                                         physics: CircularPanPhysics(
                                           duration: const Duration(seconds: 2),
@@ -136,37 +132,39 @@ class _FortuneWheelScreenState extends State<FortuneWheelScreen> {
                                 ),
                                 Consumer(
                                   builder: (context, ref, child) {
-                                    return ElevatedButton(
-                                      onPressed: () {
-                                        final itemsLength = ref.read(
-                                          fortuneWheelProvider.select(
-                                            (state) =>
-                                                state.participants.length,
-                                          ),
-                                        );
+                                    final viewState = ref.watch(
+                                      fortuneWheelProvider.select(
+                                        (state) => state.viewState,
+                                      ),
+                                    );
+                                    return FilledButton(
+                                      onPressed: viewState == ViewState.spinning
+                                          ? null
+                                          : () {
+                                              final itemsLength = ref.read(
+                                                fortuneWheelProvider.select(
+                                                  (state) =>
+                                                      state.participants.length,
+                                                ),
+                                              );
 
-                                        if (itemsLength < 2) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Aggiungi almeno due partecipanti!',
-                                              ),
-                                            ),
-                                          );
-                                          return;
-                                        }
+                                              if (itemsLength < 2) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      'Aggiungi almeno due partecipanti!',
+                                                    ),
+                                                  ),
+                                                );
+                                                return;
+                                              }
 
-                                        final random = math.Random.secure();
-                                        _selectedStream.add(random.nextInt(
-                                          ref.read(
-                                            fortuneWheelProvider.select(
-                                              (state) =>
-                                                  state.participants.length,
-                                            ),
-                                          ),
-                                        ));
-                                      },
+                                              ref
+                                                  .read(fortuneWheelProvider
+                                                      .notifier)
+                                                  .spin();
+                                            },
                                       child: Text('Spin'),
                                     );
                                   },
@@ -339,14 +337,20 @@ class _FortuneWheelScreenState extends State<FortuneWheelScreen> {
                 )
               ],
             ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: ConfettiWidget(
-                confettiController: _confettiController,
-                blastDirectionality: BlastDirectionality.explosive,
-                blastDirection: math.pi,
-                numberOfParticles: 200,
-              ),
+            Consumer(
+              builder: (context, ref, child) {
+                return Align(
+                  alignment: Alignment.topCenter,
+                  child: ConfettiWidget(
+                    confettiController: ref
+                        .read(fortuneWheelProvider.notifier)
+                        .confettiController,
+                    blastDirectionality: BlastDirectionality.explosive,
+                    blastDirection: math.pi,
+                    numberOfParticles: 200,
+                  ),
+                );
+              },
             ),
           ],
         ),

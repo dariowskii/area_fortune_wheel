@@ -11,4 +11,6 @@ class Partecipant with _$Partecipant {
 
   factory Partecipant.fromJson(Map<String, dynamic> json) =>
       _$PartecipantFromJson(json);
+
+  factory Partecipant.named(String name) => Partecipant(name: name);
 }

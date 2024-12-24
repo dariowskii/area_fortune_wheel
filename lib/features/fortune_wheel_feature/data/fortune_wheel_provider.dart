@@ -1,5 +1,9 @@
+import 'dart:async';
+import 'dart:math' as math;
+
 import 'package:arena_fortune_wheel/constants.dart';
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/domain/participant.dart';
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -18,23 +22,35 @@ enum ViewState {
 class FortuneWheelState with _$FortuneWheelState {
   const factory FortuneWheelState({
     required ViewState viewState,
-    required int lastSelected,
     required List<Partecipant> participants,
     required List<Color> associatedColors,
+    required List<int> extractedParticipants,
+    Partecipant? lastSelected,
   }) = _FortuneWheelState;
 
   factory FortuneWheelState.initial() => FortuneWheelState(
         viewState: ViewState.initial,
-        lastSelected: -1,
         associatedColors: kDefaultItemsColors,
+        extractedParticipants: [],
         participants: [],
       );
 }
 
 @riverpod
 class FortuneWheel extends _$FortuneWheel {
+  late final _streamController = StreamController<int>();
+  late final _confettiController = ConfettiController(
+    duration: const Duration(seconds: 5),
+  );
+  StreamController<int> get streamController => _streamController;
+  ConfettiController get confettiController => _confettiController;
+
   @override
-  FortuneWheelState build() => FortuneWheelState.initial();
+  FortuneWheelState build() {
+    ref.onDispose(_streamController.close);
+    ref.onDispose(_confettiController.dispose);
+    return FortuneWheelState.initial();
+  }
 
   void handleUserInput(String value) {
     List<Partecipant> allPartecipants = [];
@@ -63,8 +79,41 @@ class FortuneWheel extends _$FortuneWheel {
     );
   }
 
+  void spin() {
+    if (state.viewState == ViewState.spinning) {
+      return;
+    }
+
+    state = state.copyWith(viewState: ViewState.spinning);
+    final random = math.Random.secure();
+    final newExtracted = random.nextInt(state.participants.length);
+
+    state = state.copyWith(
+      extractedParticipants: [...state.extractedParticipants, newExtracted],
+    );
+    _streamController.add(newExtracted);
+  }
+
   void reset() {
-    ref.invalidateSelf();
+    state = FortuneWheelState.initial();
+  }
+
+  void finish() {
+    if (state.viewState != ViewState.spinning) {
+      return;
+    }
+
+    final newParticipants = [...state.participants];
+    final removed = newParticipants.removeAt(
+      state.extractedParticipants.last,
+    );
+    state = state.copyWith(
+      viewState: ViewState.finished,
+      lastSelected: removed,
+      participants: newParticipants,
+    );
+
+    _confettiController.play();
   }
 
   void removeParticipant(int index) {
@@ -85,13 +134,15 @@ class FortuneWheel extends _$FortuneWheel {
       if (value.contains(p)) {
         return value
             .split(p)
-            .map((e) => Partecipant(
-                  name: e
-                      .trim()
-                      .replaceAll('\n', '')
-                      .replaceAll(',', '')
-                      .replaceAll(' ', ''),
-                ))
+            .map((e) {
+              return e
+                  .trim()
+                  .replaceAll('\n', '')
+                  .replaceAll(',', '')
+                  .replaceAll(' ', '');
+            })
+            .where((e) => e.isNotEmpty)
+            .map(Partecipant.named)
             .toList(growable: false);
       }
     }
