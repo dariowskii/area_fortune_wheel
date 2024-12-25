@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:arena_fortune_wheel/constants.dart';
+import 'package:arena_fortune_wheel/extensions.dart';
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/domain/participant.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class FortuneWheelState with _$FortuneWheelState {
     Partecipant? lastSelected,
   }) = _FortuneWheelState;
 
-  factory FortuneWheelState.initial() => FortuneWheelState(
+  factory FortuneWheelState.initial() => const FortuneWheelState(
         viewState: ViewState.initial,
         associatedColors: kDefaultItemsColors,
         extractedParticipants: [],
@@ -39,9 +40,7 @@ class FortuneWheelState with _$FortuneWheelState {
 @riverpod
 class FortuneWheel extends _$FortuneWheel {
   late final _streamController = StreamController<int>();
-  late final _confettiController = ConfettiController(
-    duration: const Duration(seconds: 5),
-  );
+  late final _confettiController = ConfettiController(duration: 5.seconds);
   StreamController<int> get streamController => _streamController;
   ConfettiController get confettiController => _confettiController;
 
@@ -155,7 +154,7 @@ class FortuneWheel extends _$FortuneWheel {
               .replaceAll('\n', '')
               .replaceAll(',', '')
               .replaceAll(' ', ''),
-        )
+        ),
       ];
     }
 
