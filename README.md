@@ -1,16 +1,35 @@
-# arena_fortune_wheel
+# Arena Fortune Wheel
 
-A new Flutter project.
+This is a project for creating a fortune wheel for drawing gadgets during [Marco Arena](https://www.linkedin.com/in/marcoarena) community events.
 
-## Getting Started
+Made with [Flutter](https://flutter.dev/) and ❤️ by [Dario Varriale](https://www.linkedin.com/in/dario-varriale/).
 
-This project is a starting point for a Flutter application.
+## Installation and Usage
 
-A few resources to get you started if this is your first Flutter project:
+To start the project, you need to have `FVM`, the Flutter version manager, installed. If you haven't installed it yet, you can do so by following [these instructions](https://fvm.app/documentation/getting-started/installation).
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Once `FVM` is installed, you can clone the project and install the correct version of Flutter with the following command:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+fvm install
+```
+
+Next, you can install the project dependencies with the command:
+
+```bash
+fvm flutter pub get
+```
+
+### Starting the Application
+
+To start the application, first run the command to generate the necessary files:
+
+```bash
+fvm dart run build_runner build
+```
+
+Finally, you can start the application with the command:
+
+```bash
+fvm flutter run
+```
