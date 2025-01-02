@@ -15,15 +15,20 @@ class PartecipantsInfo extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          'Partecipanti ($partecipants)',
-          style: Theme.of(context).textTheme.labelLarge,
+        Expanded(
+          flex: 5,
+          child: Text(
+            'Partecipanti ($partecipants)',
+            style: Theme.of(context).textTheme.labelLarge,
+          ),
         ),
-        IconButton(
-          onPressed: () {
-            ref.read(fortuneWheelProvider.notifier).reset();
-          },
-          icon: const Icon(Icons.delete),
+        Expanded(
+          child: IconButton(
+            onPressed: () {
+              ref.read(fortuneWheelProvider.notifier).reset();
+            },
+            icon: const Icon(Icons.delete),
+          ),
         ),
       ],
     );

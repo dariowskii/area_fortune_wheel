@@ -12,7 +12,7 @@ class AddUserInput extends ConsumerStatefulWidget {
 }
 
 class _AddUserInputState extends ConsumerState<AddUserInput> {
-  late final TextEditingController _textController;
+  late final TextEditingController _textController = TextEditingController();
 
   @override
   void dispose() {
@@ -28,39 +28,47 @@ class _AddUserInputState extends ConsumerState<AddUserInput> {
       ),
     );
     return Row(
-      spacing: 8,
       children: [
         Expanded(
-          child: TextField(
-            controller: _textController,
-            decoration: const InputDecoration(
-              hintText: 'Aggiungi partecipanti',
-              border: OutlineInputBorder(),
+          flex: 5,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: TextField(
+              controller: _textController,
+              decoration: InputDecoration(
+                label: const Text('Aggiungi partecipanti'),
+                border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.all(8),
+                suffix: IconButton(
+                  onPressed: viewState == ViewState.spinning
+                      ? null
+                      : () {
+                          FocusScope.of(context).unfocus();
+                          final text = _textController.text.trim();
+                          _textController.clear();
+                          if (text.isEmpty) {
+                            return;
+                          }
+
+                          ref
+                              .read(fortuneWheelProvider.notifier)
+                              .handleUserInput(_textController.text);
+                        },
+                  icon: Icon(
+                    Icons.send,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+              onTapOutside: (_) {
+                FocusScope.of(context).unfocus();
+              },
+              maxLength: 1000,
+              minLines: 1,
+              maxLines: 10,
+              enabled: viewState != ViewState.spinning,
             ),
-            onTapOutside: (_) {
-              FocusScope.of(context).unfocus();
-            },
-            maxLength: 1000,
-            minLines: 1,
-            maxLines: 10,
-            enabled: viewState != ViewState.spinning,
           ),
-        ),
-        IconButton(
-          onPressed: viewState == ViewState.spinning
-              ? null
-              : () {
-                  FocusScope.of(context).unfocus();
-                  final text = _textController.text.trim();
-                  if (text.isEmpty) {
-                    return;
-                  }
-                  ref
-                      .read(fortuneWheelProvider.notifier)
-                      .handleUserInput(_textController.text);
-                  _textController.clear();
-                },
-          icon: const Icon(Icons.add),
         ),
       ],
     );

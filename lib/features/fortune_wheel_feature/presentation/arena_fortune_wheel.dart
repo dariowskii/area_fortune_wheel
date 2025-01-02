@@ -10,6 +10,46 @@ import 'dart:math' as math;
 class ArenaFortuneWheel extends ConsumerWidget {
   const ArenaFortuneWheel({super.key});
 
+  void _presentWinnerDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
+    final winner =
+        ref.read(fortuneWheelProvider.notifier).getLatestWinner().name;
+    ref.read(fortuneWheelProvider.notifier).playConfetti();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Winner 🎉'),
+          content: Text(
+            'Il vincitore è $winner!',
+            style: const TextStyle(
+              fontSize: 24,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                ref.read(fortuneWheelProvider.notifier).finish(remove: false);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Chiudi'),
+            ),
+            FilledButton(
+              onPressed: () {
+                ref.read(fortuneWheelProvider.notifier).finish();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Rimuovi vincitore'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final fortuneState = ref.watch(fortuneWheelProvider);
@@ -49,11 +89,7 @@ class ArenaFortuneWheel extends ConsumerWidget {
       alignment: Alignment.centerRight,
       animateFirst: false,
       onAnimationEnd: () {
-        ref
-            .read(
-              fortuneWheelProvider.notifier,
-            )
-            .finish();
+        _presentWinnerDialog(context, ref);
       },
       physics: CircularPanPhysics(
         duration: 2.seconds,

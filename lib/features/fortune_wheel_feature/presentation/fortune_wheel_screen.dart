@@ -2,6 +2,7 @@ import 'package:arena_fortune_wheel/extensions.dart';
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/add_user_input.dart';
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/arena_fortune_wheel.dart';
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/confetti_dispatcher.dart';
+import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/last_extracted_partecipant.dart';
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/partecipants_info.dart';
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/partecipants_list.dart';
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/spin_button.dart';
@@ -44,7 +45,13 @@ class _FortuneWheelScreenState extends State<FortuneWheelScreen> {
                                   width: constraints.maxHeight * 0.8,
                                   child: const ArenaFortuneWheel(),
                                 ),
-                                const SpinButton(),
+                                const Column(
+                                  spacing: 8,
+                                  children: [
+                                    LastExtractedPartecipant(),
+                                    SpinButton(),
+                                  ],
+                                ),
                               ],
                             );
                           },
@@ -79,6 +86,7 @@ class _FortuneWheelScreenState extends State<FortuneWheelScreen> {
                     child: AnimatedOpacity(
                       duration: _drawerIsOpen ? 600.ms : 400.ms,
                       opacity: _drawerIsOpen ? 1 : 0,
+                      curve: Curves.easeInOut,
                       child: const Column(
                         spacing: 16,
                         crossAxisAlignment: CrossAxisAlignment.start,

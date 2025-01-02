@@ -97,22 +97,37 @@ class FortuneWheel extends _$FortuneWheel {
     state = FortuneWheelState.initial();
   }
 
-  void finish() {
+  void playConfetti() {
+    _confettiController.play();
+  }
+
+  void finish({bool remove = true}) {
     if (state.viewState != ViewState.spinning) {
       return;
     }
 
-    final newParticipants = [...state.participants];
-    final removed = newParticipants.removeAt(
-      state.extractedParticipants.last,
-    );
+    if (remove) {
+      final newParticipants = [...state.participants];
+      final removed = newParticipants.removeAt(
+        state.extractedParticipants.last,
+      );
+      state = state.copyWith(
+        viewState: ViewState.finished,
+        lastSelected: removed,
+        participants: newParticipants,
+      );
+      return;
+    }
+
+    final lastSelected = state.participants[state.extractedParticipants.last];
     state = state.copyWith(
       viewState: ViewState.finished,
-      lastSelected: removed,
-      participants: newParticipants,
+      lastSelected: lastSelected,
     );
+  }
 
-    _confettiController.play();
+  Partecipant getLatestWinner() {
+    return state.participants[state.extractedParticipants.last];
   }
 
   void removeParticipant(int index) {
