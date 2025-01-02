@@ -52,7 +52,7 @@ class _AddUserInputState extends ConsumerState<AddUserInput> {
 
                           ref
                               .read(fortuneWheelProvider.notifier)
-                              .handleUserInput(_textController.text);
+                              .handleUserInput(text);
                         },
                   icon: Icon(
                     Icons.send,

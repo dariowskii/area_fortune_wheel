@@ -1,10 +1,10 @@
+import 'dart:math';
+
 import 'package:arena_fortune_wheel/extensions.dart';
-import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/add_user_input.dart';
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/arena_fortune_wheel.dart';
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/confetti_dispatcher.dart';
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/last_extracted_partecipant.dart';
-import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/partecipants_info.dart';
-import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/partecipants_list.dart';
+import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/partecipants_column.dart';
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/spin_button.dart';
 import 'package:flutter/material.dart';
 
@@ -21,10 +21,23 @@ class _FortuneWheelScreenState extends State<FortuneWheelScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
+    final isSmallScreen = size.width < 1000;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Arena\'s Fortune Wheel'),
       ),
+      endDrawer: isSmallScreen
+          ? const Drawer(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top: 16,
+                  left: 16,
+                  bottom: 16,
+                ),
+                child: PartecipantsColumn(),
+              ),
+            )
+          : null,
       body: SafeArea(
         child: Stack(
           children: [
@@ -37,70 +50,73 @@ class _FortuneWheelScreenState extends State<FortuneWheelScreen> {
                       Positioned.fill(
                         child: LayoutBuilder(
                           builder: (context, constraints) {
+                            final smallest = min(
+                              constraints.maxWidth,
+                              constraints.maxHeight,
+                            );
                             return Column(
-                              spacing: 64,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 SizedBox(
-                                  height: constraints.maxHeight * 0.8,
-                                  width: constraints.maxHeight * 0.8,
+                                  height: smallest * 0.8,
+                                  width: smallest * 0.8,
                                   child: const ArenaFortuneWheel(),
                                 ),
-                                const Column(
-                                  spacing: 8,
-                                  children: [
-                                    LastExtractedPartecipant(),
-                                    SpinButton(),
-                                  ],
+                                SizedBox(
+                                  height: smallest * 0.2,
+                                  child: const Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    spacing: 8,
+                                    children: [
+                                      LastExtractedPartecipant(),
+                                      SpinButton(),
+                                    ],
+                                  ),
                                 ),
                               ],
                             );
                           },
                         ),
                       ),
-                      Positioned(
-                        top: 16,
-                        right: 16,
-                        child: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _drawerIsOpen = !_drawerIsOpen;
-                            });
-                          },
-                          icon: AnimatedRotation(
-                            duration: 300.ms,
-                            turns: _drawerIsOpen ? 0 : .5,
-                            child: const Icon(
-                              Icons.keyboard_tab,
+                      if (!isSmallScreen) ...[
+                        Positioned(
+                          top: 16,
+                          right: 16,
+                          child: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _drawerIsOpen = !_drawerIsOpen;
+                              });
+                            },
+                            icon: AnimatedRotation(
+                              duration: 300.ms,
+                              turns: _drawerIsOpen ? 0 : .5,
+                              child: const Icon(
+                                Icons.keyboard_tab,
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
-                AnimatedContainer(
-                  duration: 600.ms,
-                  curve: Curves.easeInOut,
-                  width: _drawerIsOpen ? size.width * 0.3 : 0,
-                  child: OverflowBox(
-                    child: AnimatedOpacity(
-                      duration: _drawerIsOpen ? 600.ms : 400.ms,
-                      opacity: _drawerIsOpen ? 1 : 0,
-                      curve: Curves.easeInOut,
-                      child: const Column(
-                        spacing: 16,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          PartecipantsInfo(),
-                          Expanded(
-                            child: PartecipantsList(),
-                          ),
-                          AddUserInput(),
-                        ],
+                if (!isSmallScreen) ...[
+                  AnimatedContainer(
+                    duration: 600.ms,
+                    curve: Curves.easeInOut,
+                    width: _drawerIsOpen ? size.width * 0.3 : 0,
+                    child: OverflowBox(
+                      child: AnimatedOpacity(
+                        duration: _drawerIsOpen ? 600.ms : 400.ms,
+                        opacity: _drawerIsOpen ? 1 : 0,
+                        curve: Curves.easeInOut,
+                        child: const PartecipantsColumn(),
                       ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
             const ConfettiDispatcher(),

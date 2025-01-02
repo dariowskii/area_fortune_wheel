@@ -23,22 +23,12 @@ class PartecipantsList extends ConsumerWidget {
             background: Container(
               color: Colors.redAccent,
               alignment: Alignment.centerRight,
-              child: const Row(
-                spacing: 8,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Elimina',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Icon(
-                    Icons.delete,
-                    color: Colors.white,
-                  ),
-                ],
+              child: const Padding(
+                padding: EdgeInsets.only(right: 16.0),
+                child: Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                ),
               ),
             ),
             onDismissed: (_) {

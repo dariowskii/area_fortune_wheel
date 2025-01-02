@@ -92,7 +92,7 @@ class ArenaFortuneWheel extends ConsumerWidget {
         _presentWinnerDialog(context, ref);
       },
       physics: CircularPanPhysics(
-        duration: 2.seconds,
+        duration: 3.seconds,
         curve: Curves.decelerate,
       ),
       indicators: [
