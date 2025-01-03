@@ -25,7 +25,7 @@ class FortuneWheelState with _$FortuneWheelState {
     required ViewState viewState,
     required List<Partecipant> participants,
     required List<Color> associatedColors,
-    required List<int> extractedParticipants,
+    required List<Partecipant> extractedParticipants,
     Partecipant? lastSelected,
   }) = _FortuneWheelState;
 
@@ -88,12 +88,13 @@ class FortuneWheel extends _$FortuneWheel {
 
     state = state.copyWith(viewState: ViewState.spinning);
     final random = math.Random.secure();
-    final newExtracted = random.nextInt(state.participants.length);
+    final newExtractedIndex = random.nextInt(state.participants.length);
+    final newExtracted = state.participants[newExtractedIndex];
 
     state = state.copyWith(
       extractedParticipants: [...state.extractedParticipants, newExtracted],
     );
-    _streamController.add(newExtracted);
+    _streamController.add(newExtractedIndex);
   }
 
   void reset() {
@@ -111,26 +112,24 @@ class FortuneWheel extends _$FortuneWheel {
 
     if (remove) {
       final newParticipants = [...state.participants];
-      final removed = newParticipants.removeAt(
-        state.extractedParticipants.last,
-      );
+      newParticipants.remove(state.extractedParticipants.last);
       state = state.copyWith(
         viewState: ViewState.finished,
-        lastSelected: removed,
+        lastSelected: state.extractedParticipants.last,
         participants: newParticipants,
       );
       return;
     }
 
-    final lastSelected = state.participants[state.extractedParticipants.last];
     state = state.copyWith(
       viewState: ViewState.finished,
-      lastSelected: lastSelected,
+      lastSelected: state.extractedParticipants.last,
     );
   }
 
   Partecipant getLatestWinner() {
-    return state.participants[state.extractedParticipants.last];
+    return state.extractedParticipants.lastOrNull ??
+        const Partecipant(name: 'Nessuno');
   }
 
   void removeParticipant(int index) {
