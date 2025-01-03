@@ -39,13 +39,16 @@ class FortuneWheelState with _$FortuneWheelState {
 
 @riverpod
 class FortuneWheel extends _$FortuneWheel {
-  late final _streamController = StreamController<int>();
-  late final _confettiController = ConfettiController(duration: 5.seconds);
+  late final StreamController<int> _streamController;
+  late final ConfettiController _confettiController;
   StreamController<int> get streamController => _streamController;
   ConfettiController get confettiController => _confettiController;
 
   @override
   FortuneWheelState build() {
+    _streamController = StreamController<int>();
+    _confettiController = ConfettiController(duration: 5.seconds);
+
     ref.onDispose(_streamController.close);
     ref.onDispose(_confettiController.dispose);
     return FortuneWheelState.initial();
