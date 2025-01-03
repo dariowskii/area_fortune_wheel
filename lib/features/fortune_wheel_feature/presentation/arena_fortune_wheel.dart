@@ -100,9 +100,11 @@ class ArenaFortuneWheel extends ConsumerWidget {
           alignment: Alignment.centerRight,
           child: Transform.rotate(
             angle: math.pi / 2,
-            child: const TriangleIndicator(
+            child: TriangleIndicator(
               color: Colors.yellow,
               elevation: 4,
+              width: context.isSmallScreen ? 20 : 36,
+              height: context.isSmallScreen ? 20 : 36,
             ),
           ),
         ),

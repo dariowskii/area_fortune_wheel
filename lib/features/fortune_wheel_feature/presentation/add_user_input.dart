@@ -27,50 +27,47 @@ class _AddUserInputState extends ConsumerState<AddUserInput> {
         (state) => state.viewState,
       ),
     );
-    return Row(
-      children: [
-        Expanded(
-          flex: 5,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: TextField(
-              controller: _textController,
-              decoration: InputDecoration(
-                label: const Text('Aggiungi partecipanti'),
-                border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.all(8),
-                suffix: IconButton(
-                  onPressed: viewState == ViewState.spinning
-                      ? null
-                      : () {
-                          FocusScope.of(context).unfocus();
-                          final text = _textController.text.trim();
-                          _textController.clear();
-                          if (text.isEmpty) {
-                            return;
-                          }
+    final bottomPadding = MediaQuery.viewInsetsOf(context).bottom;
+    return Padding(
+      padding: EdgeInsets.only(
+        right: 16,
+        bottom: bottomPadding > 0 ? bottomPadding + 16 : 0,
+      ),
+      child: TextField(
+        controller: _textController,
+        decoration: InputDecoration(
+          label: const Text('Aggiungi partecipanti'),
+          border: const OutlineInputBorder(),
+          contentPadding: const EdgeInsets.all(8),
+          suffix: IconButton(
+            onPressed: viewState == ViewState.spinning
+                ? null
+                : () {
+                    FocusScope.of(context).unfocus();
+                    final text = _textController.text.trim();
+                    _textController.clear();
+                    if (text.isEmpty) {
+                      return;
+                    }
 
-                          ref
-                              .read(fortuneWheelProvider.notifier)
-                              .handleUserInput(text);
-                        },
-                  icon: Icon(
-                    Icons.send,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-              ),
-              onTapOutside: (_) {
-                FocusScope.of(context).unfocus();
-              },
-              maxLength: 1000,
-              minLines: 1,
-              maxLines: 10,
-              enabled: viewState != ViewState.spinning,
+                    ref
+                        .read(fortuneWheelProvider.notifier)
+                        .handleUserInput(text);
+                  },
+            icon: Icon(
+              Icons.send,
+              color: Theme.of(context).primaryColor,
             ),
           ),
         ),
-      ],
+        onTapOutside: (_) {
+          FocusScope.of(context).unfocus();
+        },
+        maxLength: 1000,
+        minLines: 1,
+        maxLines: 10,
+        enabled: viewState != ViewState.spinning,
+      ),
     );
   }
 }

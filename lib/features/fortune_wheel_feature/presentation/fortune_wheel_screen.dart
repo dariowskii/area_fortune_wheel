@@ -20,8 +20,7 @@ class _FortuneWheelScreenState extends State<FortuneWheelScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final isSmallScreen = size.width < 1000;
+    final isSmallScreen = context.isSmallScreen;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Arena\'s Fortune Wheel'),
@@ -106,7 +105,7 @@ class _FortuneWheelScreenState extends State<FortuneWheelScreen> {
                   AnimatedContainer(
                     duration: 600.ms,
                     curve: Curves.easeInOut,
-                    width: _drawerIsOpen ? size.width * 0.3 : 0,
+                    width: _drawerIsOpen ? context.width * 0.3 : 0,
                     child: OverflowBox(
                       child: AnimatedOpacity(
                         duration: _drawerIsOpen ? 600.ms : 400.ms,
