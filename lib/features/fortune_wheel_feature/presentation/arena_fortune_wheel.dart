@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:arena_fortune_wheel/constants.dart';
 import 'package:arena_fortune_wheel/extensions.dart';
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/data/fortune_wheel_provider.dart'
     show fortuneWheelProvider;
 import 'package:flutter/material.dart';
+import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
@@ -16,7 +19,9 @@ class ArenaFortuneWheel extends ConsumerWidget {
   ) {
     final winner =
         ref.read(fortuneWheelProvider.notifier).getLatestWinner().name;
-    ref.read(fortuneWheelProvider.notifier).playConfetti();
+
+    _launchConfetti(context);
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -48,6 +53,95 @@ class ArenaFortuneWheel extends ConsumerWidget {
         );
       },
     );
+  }
+
+  void _launchConfetti(BuildContext context) {
+    if (context.isSmallScreen) {
+      _launchConfettiMobile(context);
+      return;
+    }
+
+    const colors = [
+      Color(0xFFff5e7e),
+      Color(0xFFfcff42),
+      Color(0xFFffa62d),
+    ];
+    final frameTime = 1000 ~/ 24;
+    final total = 5 * 1000 ~/ frameTime;
+    int progress = 0;
+
+    ConfettiController? controller1;
+    ConfettiController? controller2;
+    bool isDone = false;
+
+    Timer.periodic(frameTime.ms, (timer) {
+      progress++;
+
+      if (progress >= total) {
+        timer.cancel();
+        isDone = true;
+        return;
+      }
+      if (controller1 == null) {
+        controller1 = Confetti.launch(
+          context,
+          options: const ConfettiOptions(
+            particleCount: 2,
+            angle: 60,
+            spread: 55,
+            x: 0,
+            colors: colors,
+          ),
+          onFinished: (overlayEntry) {
+            if (isDone) {
+              overlayEntry.remove();
+            }
+          },
+        );
+      } else {
+        controller1!.launch();
+      }
+
+      if (controller2 == null) {
+        controller2 = Confetti.launch(
+          context,
+          options: const ConfettiOptions(
+            particleCount: 2,
+            angle: 120,
+            spread: 55,
+            x: 1,
+            colors: colors,
+          ),
+          onFinished: (overlayEntry) {
+            if (isDone) {
+              overlayEntry.remove();
+            }
+          },
+        );
+      } else {
+        controller2!.launch();
+      }
+    });
+  }
+
+  void _launchConfettiMobile(BuildContext context) {
+    shoot() {
+      Confetti.launch(
+        context,
+        options: const ConfettiOptions(
+          particleCount: 100,
+          spread: 70,
+          y: -0.5,
+          angle: -90,
+          ticks: 400,
+        ),
+      );
+    }
+
+    Timer(0.ms, shoot);
+    Timer(200.ms, shoot);
+    Timer(1.seconds, shoot);
+    Timer(2.seconds, shoot);
   }
 
   @override
