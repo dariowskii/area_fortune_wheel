@@ -189,6 +189,9 @@ class ArenaFortuneWheel extends ConsumerWidget {
         duration: 3.seconds,
         curve: Curves.decelerate,
       ),
+      onFling: () {
+        ref.read(fortuneWheelProvider.notifier).spin();
+      },
       indicators: [
         FortuneIndicator(
           alignment: Alignment.centerRight,
