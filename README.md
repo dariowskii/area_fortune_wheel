@@ -33,3 +33,11 @@ Finally, you can start the application with the command:
 ```bash
 fvm flutter run
 ```
+
+### Build Web App
+
+To build the web app, run the command:
+
+```bash
+fvm flutter build web --base-href="/arena-fortune-wheel/"
+```
