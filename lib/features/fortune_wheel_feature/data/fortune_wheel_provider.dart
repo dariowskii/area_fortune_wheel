@@ -56,13 +56,11 @@ class FortuneWheel extends _$FortuneWheel {
       allPartecipants = [...state.participants];
     }
     allPartecipants.addAll(
-      _getFromPattern(value: value, pattern: ['\n', ', ', ',', ' ']),
+      _getFromPattern(value: value, pattern: '\n'),
     );
 
-    allPartecipants = allPartecipants
-        .where((element) => element.name.isNotEmpty)
-        .toSet()
-        .toList(growable: false);
+    allPartecipants =
+        allPartecipants.where((element) => element.name.isNotEmpty).toList();
 
     if (allPartecipants.isEmpty) {
       return;
@@ -123,8 +121,7 @@ class FortuneWheel extends _$FortuneWheel {
   }
 
   void removeParticipant(int index) {
-    final List<Partecipant> allPartecipants = [...state.participants];
-    allPartecipants.removeAt(index);
+    final allPartecipants = [...state.participants]..removeAt(index);
 
     state = state.copyWith(
       participants: allPartecipants,
@@ -134,33 +131,23 @@ class FortuneWheel extends _$FortuneWheel {
 
   List<Partecipant> _getFromPattern({
     required String value,
-    required List<String> pattern,
+    required String pattern,
   }) {
-    for (final p in pattern) {
-      if (value.contains(p)) {
-        return value
-            .split(p)
-            .map((e) {
-              return e
-                  .trim()
-                  .replaceAll('\n', '')
-                  .replaceAll(',', '')
-                  .replaceAll(' ', '');
-            })
-            .where((e) => e.isNotEmpty)
-            .map(Partecipant.named)
-            .toList(growable: false);
-      }
+    if (value.contains(pattern)) {
+      return value
+          .split(pattern)
+          .map((e) {
+            return e.trim().replaceAll('\n', '');
+          })
+          .where((e) => e.isNotEmpty)
+          .map(Partecipant.named)
+          .toList();
     }
 
     if (value.isNotEmpty) {
       return [
         Partecipant(
-          name: value
-              .trim()
-              .replaceAll('\n', '')
-              .replaceAll(',', '')
-              .replaceAll(' ', ''),
+          name: value.trim().replaceAll('\n', ''),
         ),
       ];
     }
