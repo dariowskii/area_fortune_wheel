@@ -74,7 +74,8 @@ class FortuneWheel extends _$FortuneWheel {
   }
 
   void spin() {
-    if (state.viewState == ViewState.spinning) {
+    if (state.viewState == ViewState.spinning ||
+        state.participants.length < 2) {
       return;
     }
 
@@ -136,9 +137,7 @@ class FortuneWheel extends _$FortuneWheel {
     if (value.contains(pattern)) {
       return value
           .split(pattern)
-          .map((e) {
-            return e.trim().replaceAll('\n', '');
-          })
+          .map(_cleanName)
           .where((e) => e.isNotEmpty)
           .map(Partecipant.named)
           .toList();
@@ -147,13 +146,15 @@ class FortuneWheel extends _$FortuneWheel {
     if (value.isNotEmpty) {
       return [
         Partecipant(
-          name: value.trim().replaceAll('\n', ''),
+          name: _cleanName(value),
         ),
       ];
     }
 
     return [];
   }
+
+  String _cleanName(String input) => input.trim().replaceAll('\n', '');
 
   List<Color> _generateRandomColors(int length) {
     List<Color> primaries = [];
