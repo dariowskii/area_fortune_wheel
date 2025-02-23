@@ -40,6 +40,7 @@ dependencies:
   flutter_confetti: ^0.3.4
   freezed_annotation: ^2.4.4
   json_annotation: ^4.9.0
+  just_audio: ^0.9.46
 
 dev_dependencies:
   flutter_test:
