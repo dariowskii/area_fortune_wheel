@@ -102,6 +102,8 @@ class FortuneWheel extends _$FortuneWheel {
     if (remove) {
       final newParticipants = [...state.participants];
       newParticipants.remove(state.extractedParticipants.last);
+      newParticipants.shuffle();
+
       state = state.copyWith(
         viewState: ViewState.finished,
         lastSelected: state.extractedParticipants.last,
@@ -118,7 +120,20 @@ class FortuneWheel extends _$FortuneWheel {
 
   Partecipant getLatestWinner() {
     return state.extractedParticipants.lastOrNull ??
-        const Partecipant(name: 'Nessuno');
+        Partecipant.named('Nessuno');
+  }
+
+  void shufflePartecipants() {
+    final newParticipants = [...state.participants];
+    newParticipants.shuffle();
+
+    final colors = [...state.associatedColors];
+    colors.shuffle();
+
+    state = state.copyWith(
+      participants: newParticipants,
+      associatedColors: colors,
+    );
   }
 
   void removeParticipant(int index) {
@@ -145,9 +160,7 @@ class FortuneWheel extends _$FortuneWheel {
 
     if (value.isNotEmpty) {
       return [
-        Partecipant(
-          name: _cleanName(value),
-        ),
+        Partecipant.named(_cleanName(value)),
       ];
     }
 
