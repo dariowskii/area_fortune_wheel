@@ -1,3 +1,5 @@
+import 'package:arena_fortune_wheel/features/fortune_wheel_feature/data/audio_player_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
 
 import 'package:arena_fortune_wheel/extensions.dart';
@@ -7,14 +9,14 @@ import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/spin_button.dart';
 import 'package:flutter/material.dart';
 
-class FortuneWheelScreen extends StatefulWidget {
+class FortuneWheelScreen extends ConsumerStatefulWidget {
   const FortuneWheelScreen({super.key});
 
   @override
-  State<FortuneWheelScreen> createState() => _FortuneWheelScreenState();
+  ConsumerState<FortuneWheelScreen> createState() => _FortuneWheelScreenState();
 }
 
-class _FortuneWheelScreenState extends State<FortuneWheelScreen> {
+class _FortuneWheelScreenState extends ConsumerState<FortuneWheelScreen> {
   var _drawerIsOpen = true;
 
   @override

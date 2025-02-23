@@ -1,4 +1,5 @@
 import 'package:arena_fortune_wheel/features/fortune_wheel_feature/data/fortune_wheel_provider.dart';
+import 'package:arena_fortune_wheel/features/fortune_wheel_feature/presentation/player_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,11 +24,16 @@ class PartecipantsInfo extends ConsumerWidget {
           ),
         ),
         Expanded(
-          child: IconButton(
-            onPressed: () {
-              ref.read(fortuneWheelProvider.notifier).reset();
-            },
-            icon: const Icon(Icons.delete),
+          child: Row(
+            children: [
+              const PlayerButton(),
+              IconButton(
+                onPressed: () {
+                  ref.read(fortuneWheelProvider.notifier).reset();
+                },
+                icon: const Icon(Icons.delete),
+              ),
+            ],
           ),
         ),
       ],
