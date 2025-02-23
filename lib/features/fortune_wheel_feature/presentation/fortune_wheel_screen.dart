@@ -1,3 +1,5 @@
+import 'package:arena_fortune_wheel/constants.dart';
+import 'package:arena_fortune_wheel/features/fortune_wheel_feature/data/fortune_wheel_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
 
@@ -61,13 +63,31 @@ class _FortuneWheelScreenState extends ConsumerState<FortuneWheelScreen> {
                             ),
                             SizedBox(
                               height: smallest * 0.2,
-                              child: const Column(
+                              child: Column(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 spacing: 8,
                                 children: [
-                                  LastExtractedPartecipant(),
-                                  SpinButton(),
+                                  const LastExtractedPartecipant(),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const SpinButton(),
+                                      kWidth4,
+                                      IconButton(
+                                        onPressed: () {
+                                          ref
+                                              .read(
+                                                fortuneWheelProvider.notifier,
+                                              )
+                                              .shufflePartecipants();
+                                        },
+                                        icon: const Icon(
+                                          Icons.shuffle,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
